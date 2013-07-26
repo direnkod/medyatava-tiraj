@@ -23,6 +23,7 @@
 # file called results.tsv that you can use for visualization purposes.
 
 import re
+import datetime
 
 from HTMLParser import HTMLParser
 import urllib2
@@ -106,6 +107,10 @@ if __name__ == "__main__":
             week)).read().decode("utf-8"))
         for key in overall:
             overall[key].append((week, parser.tirage[key]))
+
+    for key in overall:
+        overall[key].sort(key=lambda x:
+                datetime.datetime.strptime(x[0], "%d.%m.%Y"))
 
     names = sorted(overall.keys())
     results = open("results.tsv", "wb")
