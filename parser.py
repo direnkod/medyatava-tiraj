@@ -123,4 +123,11 @@ if __name__ == "__main__":
             results.write(u"%d\t" % overall[name][idx][1])
         results.write("\n")
 
+    for name in names:
+        print "%s\n" % name.encode("utf-8")
+        print "\n".join([u"  %s: %s" % (w,t) for w,t in overall[name]])
+        print "%12s: %d" % ("Toplam", sum([t for w,t in overall[name]]))
+        print "%12s: %d" % ("Fark", overall[name][-1][1]-overall[name][0][1])
+        print
+
     results.close()
