@@ -31,7 +31,7 @@ import urllib2
 BASE_URL = "http://www.medyatava.com/tiraj"
 
 # Set this to the oldest week (monday) that you want to include
-OLDEST = "03.06.2013"
+OLDEST = "27.05.2013"
 
 class MyHTMLParser(HTMLParser):
     def __init__(self):
@@ -97,6 +97,27 @@ if __name__ == "__main__":
                u"EVRENSEL"   : [],
                }
 
+    mainstream = [u"HÜRRİYET",
+                  u"MİLLİYET",
+                  u"AKŞAM",
+                  u"SABAH",
+                  u"HABERTÜRK",
+                  u"TÜRKİYE",
+                  u"STAR",
+                  u"VATAN",
+                  u"YENİ ŞAFAK",
+                  u"TAKVİM",
+                  u"BUGÜN"]
+
+    opposite = [u"BİRGÜN",
+                u"SÖZCÜ",
+                u"TARAF",
+                u"AYDINLIK",
+                u"YURT",
+                u"CUMHURİYET",
+                u"SOL GAZETESİ",
+                u"EVRENSEL"]
+
     # Weeks to analyze
     weeks = parser.dates[:parser.dates.index(OLDEST) + 1]
 
@@ -129,5 +150,17 @@ if __name__ == "__main__":
         print "%12s: %d" % ("Toplam", sum([t for w,t in overall[name]]))
         print "%12s: %d" % ("Fark", overall[name][-1][1]-overall[name][0][1])
         print
+
+    mainstream_sum_begin = sum([overall[k][0][1] for k in mainstream])
+    mainstream_sum_now = sum([overall[k][-1][1] for k in mainstream])
+    opposite_sum_begin = sum([overall[k][0][1] for k in opposite])
+    opposite_sum_now = sum([overall[k][-1][1] for k in opposite])
+
+    print "Ana Akim Toplam (%s): %d" % (OLDEST, mainstream_sum_begin)
+    print "Ana Akim Toplam (%s): %d" % (weeks[0], mainstream_sum_now)
+    print "    Fark: %d" % (mainstream_sum_now - mainstream_sum_begin)
+    print "Muhalif Toplam  (%s): %d" % (OLDEST, opposite_sum_begin)
+    print "Muhalif Toplam  (%s): %d" % (weeks[0], opposite_sum_now)
+    print "    Fark: %d" % (opposite_sum_now - opposite_sum_begin)
 
     results.close()
