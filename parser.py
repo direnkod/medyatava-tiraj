@@ -30,7 +30,7 @@ import urllib2
 BASE_URL = "http://www.medyatava.com/tiraj"
 
 # Set this to the oldest week (monday) that you want to include
-OLDEST = "10.06.2013"
+OLDEST = "03.06.2013"
 
 class MyHTMLParser(HTMLParser):
     def __init__(self):
