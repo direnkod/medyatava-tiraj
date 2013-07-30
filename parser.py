@@ -114,4 +114,4 @@ if __name__ == "__main__":
 
     # Dump as json
     open("tiraj.json", "w").write(json.dumps(overall, indent=2,
-        separators=(',', ': '), sort_keys=True)
+        separators=(',', ': '), sort_keys=True))
