@@ -19,14 +19,14 @@
 
 #
 # This script parses medyatava.com/tiraj web page to fetch press runs
-# for daily Turkish newspapers. It generates a TSV (tab separated values)
-# file called results.tsv that you can use for visualization purposes.
+# for daily Turkish newspapers. It generates a JSON dict from those values.
 
 import re
+import json
+import urllib2
 import datetime
 
 from HTMLParser import HTMLParser
-import urllib2
 
 BASE_URL = "http://www.medyatava.com/tiraj"
 
@@ -97,27 +97,6 @@ if __name__ == "__main__":
                u"EVRENSEL"   : [],
                }
 
-    mainstream = [u"HÜRRİYET",
-                  u"MİLLİYET",
-                  u"AKŞAM",
-                  u"SABAH",
-                  u"HABERTÜRK",
-                  u"TÜRKİYE",
-                  u"STAR",
-                  u"VATAN",
-                  u"YENİ ŞAFAK",
-                  u"TAKVİM",
-                  u"BUGÜN"]
-
-    opposite = [u"BİRGÜN",
-                u"SÖZCÜ",
-                u"TARAF",
-                u"AYDINLIK",
-                u"YURT",
-                u"CUMHURİYET",
-                u"SOL GAZETESİ",
-                u"EVRENSEL"]
-
     # Weeks to analyze
     weeks = parser.dates[:parser.dates.index(OLDEST) + 1]
 
@@ -133,34 +112,6 @@ if __name__ == "__main__":
         overall[key].sort(key=lambda x:
                 datetime.datetime.strptime(x[0], "%d.%m.%Y"))
 
-    names = sorted(overall.keys())
-    results = open("results.tsv", "wb")
-    header = "\t".join(names)
-    header = u"Week\t%s\n" % header
-    results.write(header.encode("utf-8"))
-    for idx, week in enumerate(weeks):
-        results.write(u"%s\t" % week.replace(".", ""))
-        for name in names:
-            results.write(u"%d\t" % overall[name][idx][1])
-        results.write("\n")
-
-    for name in names:
-        print "%s\n" % name.encode("utf-8")
-        print "\n".join([u"  %s: %s" % (w,t) for w,t in overall[name]])
-        print "%12s: %d" % ("Toplam", sum([t for w,t in overall[name]]))
-        print "%12s: %d" % ("Fark", overall[name][-1][1]-overall[name][0][1])
-        print
-
-    mainstream_sum_begin = sum([overall[k][0][1] for k in mainstream])
-    mainstream_sum_now = sum([overall[k][-1][1] for k in mainstream])
-    opposite_sum_begin = sum([overall[k][0][1] for k in opposite])
-    opposite_sum_now = sum([overall[k][-1][1] for k in opposite])
-
-    print "Ana Akim Toplam (%s): %d" % (OLDEST, mainstream_sum_begin)
-    print "Ana Akim Toplam (%s): %d" % (weeks[0], mainstream_sum_now)
-    print "    Fark: %d" % (mainstream_sum_now - mainstream_sum_begin)
-    print "Muhalif Toplam  (%s): %d" % (OLDEST, opposite_sum_begin)
-    print "Muhalif Toplam  (%s): %d" % (weeks[0], opposite_sum_now)
-    print "    Fark: %d" % (opposite_sum_now - opposite_sum_begin)
-
-    results.close()
+    # Dump as json
+    open("tiraj.json", "w").write(json.dumps(overall, indent=2,
+        separators=(',', ': '), sort_keys=True)
